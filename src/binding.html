@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>绑定</title>
+    </head>
+    <body>
+        <div id="app">
+            <div x-on:click="onClick">a = ${a} b = ${b} c.c1 = ${c.c1} b = ${this.b}</div>
+            <div>
+                <input type="checkbox" x-value="${c.c1}" />
+                <input type="text" x-value="${a}" />
+            </div>
+            <div>
+                <div>d:</div>
+                <div x-for="${d}" x-title="${this.f}">${this.$index} => ${this.f} ${b}</div>
+            </div>
+            <div>
+                <div>e:</div>
+                <div x-for="${e}">${this.$index} => ${this} ${b}</div>
+            </div>
+            <div>
+                <div>f: ${f} <input type="checkbox" x-value="${f}" /></div>
+                <div x-if="${f}">${f} == ${this}</div>
+            </div>
+        </div>
+        <script type="module">
+            import {observe} from "./observable.js";
+            import {scan} from "./binding.js";
+
+            function test() {
+                let app = {
+                    onClick(e) {
+                        console.log(e.target, "clicked");
+                    }
+                };
+                observe({"a": "a", "b": "b", "c": {"c1": 1}, "d": [{"f": "f1"}, {"f": "f2"}], "e": ["e1", "e2"], "f": 1}, "", app);
+                scan(document.querySelector("#app"), null, app, "");
+
+                // setInterval(function() {
+                //     app.$data.b = Date.now();
+                // }, 3000)
+                // setTimeout(function() {
+                //     app.$data.d.pop();
+                // }, 5000)
+            }
+            test();
+        </script>
+    </body>
+</html>

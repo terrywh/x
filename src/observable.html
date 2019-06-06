@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>属性监听</title>
+    </head>
+    <body>
+        <script type="module">
+            import {observe, watch, calcDepends} from "./observable.js";
+            function test() {
+                let app = {};
+                observe({"a": "a", "b":{"b1": 1}, "c":[{"x": 0}, 1, 2, 3], "d": function() {
+                    return this.$data.a + this.$data.b.b1;
+                }}, "", app);
+
+                watch(app, "a", function() {
+                    console.log("a", arguments);
+                })
+
+                watch(app, "b.b1", function() {
+                    console.log("b.b1", arguments);
+                })
+
+                watch(app, "b.*", function() {
+                    console.log("b.*", arguments);
+                })
+
+                watch(app, "b", function() {
+                    console.log("b", arguments);
+                })
+
+                watch(app, "c.*", function() {
+                    console.log("c.*", arguments);
+                })
+                watch(app, "d", function() {
+                    console.log("d", arguments);
+                });
+
+                console.log("直接属性修改");
+                app.$data.a = "A";
+                console.log("间接属性修改");
+                app.$data.b.b1 = "B";
+                console.log("属性对象替换");
+                app.$data.b = {"b1": 1, "b2": 2};
+                console.log("替换后对象属性修改");
+                app.$data.b.b2 = "B";
+                console.log("计算依赖");
+                console.log(calcDepends(app, function() {
+                    return this.$data.a.length;
+                }));
+                console.log("属性删除");
+                delete app.$data.b.b1;
+                console.log("数组项删除");
+                app.$data.c.splice(1, 1);
+                console.log("数组项添加");
+                app.$data.c.push("abc");
+                console.log("数组项属性修改");
+                app.$data.c[0].x = "X";
+            }
+            test();
+        </script>
+    </body>
+</html>

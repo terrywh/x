@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>应用与组件</title>
+    </head>
+    <body>
+        <x-app>
+            <div>
+                应用1:
+                <hr />
+                ${x} => <x-switch-1 x-value="${x}"></x-switch-1>
+                <div>选中了 ${c} 个</div>
+                <x-switch-2 x-for="${y}" x-value="${this}"></x-switch-2>
+            </div>
+        </x-app>
+        <x-app-2>
+            <div>
+                应用2:
+                <hr />
+                <div>${x} => ${y}</div>
+            </div>
+        </x-app-2>
+        <template id="x-switch-2">
+            <input type="checkbox" x-value="${value}" />
+        </template>
+        <script type="module">
+            import {Application, Component, register} from "./component.js";
+            class XApp extends Application {
+                static data() {
+                    return {"c": function() { // 计算属性, 尽在依赖属性变更时触发更新
+                        return this.$data.y.reduce((a, c) => a + c);
+                    }, "x": 1, "y": [1, 0, 1, 0, 0]};
+                }
+            }
+            
+            // 注册顺序保证组件间的上下父子关系
+            register(XApp, "x-switch-1", class extends Component {
+                static data() {
+                    return {"value": 0};
+                }
+                
+                static shadow() {
+                    return '<input type="checkbox" x-value="${value}" />';
+                    
+                    // let el = document.createElement("input");
+                    // el.type = "checkbox";
+                    // el.setAttribute("x-value", "${value}");
+                    // el.checked = false;
+                    // return el;
+                }
+            });
+            // 
+            register("x-switch-2", {
+                shadow: document.querySelector("template#x-switch-2"),
+                data: {"value": 0},
+            });
+            // register(XApp);
+            register(document.querySelector("x-app-2"), {
+                data: {"x": "x", "y": "y"},
+            });
+            // register("x-switch-1", XSwitch1);
+            // register("x-switch-2", XSwitch2);
+        </script>
+    </body>
+</html>

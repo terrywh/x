@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>简化入口</title>
+    </head>
+    <body>
+        <x-app>
+            <div>
+                ${x} => <x-switch x-value="${x}"></x-switch>
+            </div>
+            
+        </x-app>
+        <x-app2>
+            <div>
+                ${x} => <x-check-box x-value="${x}"></x-check-box>
+            </div>
+        </x-app2>
+        <script type="module">
+            import X from "./x.js";
+            // 注册顺序保证组件间的上下父子关系
+            X(document.querySelector("x-app"), { // 简化形式的应用: el, { ... }
+                data() {
+                    return {"x": 1};
+                },
+                onCreated() {
+                    X(this, "x", function() { // 监听属性边跟
+                        console.log("x-app", arguments);
+                    })
+                }
+            }, "x-switch", { // 简化形式的组件: name, { ... }
+                data: {
+                    "value": 0
+                },
+                shadow:'<input type="checkbox" x-value="${value}" />',
+            });
+            // X(document.querySelector("x-app"), {...});
+            // X(class XSwitch extends X.)
+            X("x-check-box", class XCheckBox extends X.Component { // 类形式的组件, 自定义名称: name, class
+                static data() {
+                    return {"value": 0};
+                }
+                static shadow() {
+                    return '<input type="checkbox" x-value="${value}" />';
+                }
+            });
+            X(class XApp2 extends X.Application { // 类形式的应用, 自动命名: class
+                static data() {
+                    return {"x": 0};
+                }
+                onCreated() {
+                    X(this, "x", function() {
+                        console.log("x-app2", arguments);
+                    })
+                }
+            });
+        </script>
+    </body>
+</html>

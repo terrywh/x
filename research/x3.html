@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>数据绑定</title>
+    </head>
+    <body>
+        <app-ex>
+            <hello-ex x-who="name">Hello, ${who}</hello-ex>
+            <div>当前: <span x-title="name">${name}</span></div>
+            <div>调整: <input type="text" x-value="name" /></div>
+            <div>长度：<string-length x-string="name"></string-length></div>
+            <div x-if="name_if">长度超过 2 时出现的文本: ${name_if}</div>
+        </app-ex>
+        <script type="module">
+            import * as x from "../x.js";
+            // 容器型组件（保持内部元素）
+            x.define("hello-ex", class extends x.Container {
+                static data() {
+                    return {"who": "Example"};
+                }
+            });
+            // 正常组件（内置 Shadow DOM 替换）
+            x.define(class StringLength extends x.Component {
+                static template() {
+                    let el = document.createDocumentFragment();
+                    el.appendChild(new Text("${origin}"));
+                    el.appendChild(new Text("(初始)"));
+                    el.appendChild(new Text("${length}"));
+                    el.appendChild(new Text("(当前)"));
+                    return el;
+                }
+                static data() {
+                    return {
+                        "string": "Example",
+                        "origin": x.computed(function() { return this.string.length; }),
+                        "length": x.computed("string", function() { return this.string.length; }),
+                    };
+                }
+            });
+            // AppEx -> app-ex
+            x.define(class AppEx extends x.Application {
+                static data() {
+                    return {
+                        "name": "World",
+                        "name_if": x.computed("name", function() {
+                            return this.name.length > 2;
+                        }),
+                    };
+                }
+            });
+        </script>
+    </body>
+</html>
