@@ -330,13 +330,14 @@ function scanProp(el, binding, $, pre) {
         // 扫描属性
         for(let name of el.getAttributeNames()) {
             if(name[0] != 'x' || name[1] != '-') continue;
-            let key = name.split(":", 2); // 特殊的形式有 : 分隔
-            if(key[0] == "x-ref") $.$xref && ($.$xref[el.getAttribute(name)] = el);
-            else if(key[0] == "x-on") bindEvent(el, key[1], binding, $, el.getAttribute(name));
-            else if(key[0] == "x-bbind") bindProperty(el, key[1], binding, $, unwrapField(el.getAttribute(name), pre)); // 双向
-            else if(key[0] == "x-ubind") bindAttribute(el, key[1], binding, $, unwrapField(el.getAttribute(name), pre)); // 单项
-            else if(key[0] == "x-value") bindProperty(el, "value", binding, $, unwrapField(el.getAttribute(name), pre)); // 双向:　特化 value 属性
-            else bindAttribute(el, name.substring(2, name.length - 1), binding, $, unwrapField(el.getAttribute(name), pre)); // 单项: 简化的语法
+            let key = name.split(":", 2), val = el.getAttribute(name); // 特殊的形式有 : 分隔
+            if(!val) ;
+            else if(key[0] == "x-ref") $.$xref && ($.$xref[val] = el);
+            else if(key[0] == "x-on") bindEvent(el, key[1], binding, $, val);
+            else if(key[0] == "x-bbind") bindProperty(el, key[1], binding, $, unwrapField(val, pre)); // 双向
+            else if(key[0] == "x-ubind") bindAttribute(el, key[1], binding, $, unwrapField(val, pre)); // 单项
+            else if(key[0] == "x-value") bindProperty(el, "value", binding, $, unwrapField(val, pre)); // 双向:　特化 value 属性
+            else bindAttribute(el, name.substring(2, name.length - 1), binding, $, unwrapField(val, pre)); // 单项: 简化的语法
             el.removeAttribute(name); // 由框架处理的属性置隐藏
         }
         return true;

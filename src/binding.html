@@ -10,6 +10,11 @@
             <div>
                 <input type="checkbox" x-value="${c.c1}" />
                 <input type="text" x-value="${a}" />
+                <select x-value="${a}">
+                    <option>a1</option>
+                    <option>a2</option>
+                    <option>a3</option>
+                </select>
             </div>
             <div>
                 <div>d:</div>
@@ -34,7 +39,7 @@
                         console.log(e.target, "clicked");
                     }
                 };
-                observe({"a": "a", "b": "b", "c": {"c1": 1}, "d": [{"f": "f1"}, {"f": "f2"}], "e": ["e1", "e2"], "f": 1}, "", app);
+                observe({"a": "a2", "b": "b", "c": {"c1": 1}, "d": [{"f": "f1"}, {"f": "f2"}], "e": ["e1", "e2"], "f": 1}, "", app);
                 scan(document.querySelector("#app"), null, app, "");
 
                 // setInterval(function() {
