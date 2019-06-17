@@ -62,11 +62,12 @@ export class Component extends HTMLElement {
         let src = Object.assign(
             typeof this.constructor.data === "function"? this.constructor.data(this) : {}, // 数据成员定义
             Object.fromEntries(Object.getOwnPropertyNames(this).map((name) => [name, this[name]]))); // 目前已经设置的值需要覆盖继承
-        // 创建 this.$data 成员 observable 对象
-        observe(src, "", this);
         // 将 this.$data 成员映射为实例属性
         this[_binding_] = [];
         extend(src, this[_binding_], this);
+        // 创建 this.$data 成员 observable 对象
+        observe(src, "", this);
+        // 组件需要 ShadowDOM 元素
         if(typeof this.constructor.shadow === "function") {
             let el = this.constructor.shadow(), shadow = this.attachShadow({mode: "open"});
             if(el instanceof HTMLTemplateElement) shadow.appendChild( document.importNode(el.content, true) ); // 模板
@@ -128,9 +129,10 @@ export class Application extends HTMLElement {
         super();
         let src = typeof this.constructor.data === "function"
             ? this.constructor.data(this) : {};
-        observe(src, "", this);
+        
         this[_binding_] = [];
         extend(src, this[_binding_], this);
+        observe(src, "", this);
         // 应用程序为包含下述元素, 不创建 ShadowDOM 
 
         this.$xref = {};   // 成员引用
