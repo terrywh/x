@@ -1,4 +1,4 @@
-/*! x.js v1.0.0 / (c) TerryWu / MIT */
+/*! x.js v1.0.1 / (c) TerryWu / MIT */
 const 
     _callback_ = Symbol("callback"),
     _depsCalc_ = Symbol("depCalc"),
