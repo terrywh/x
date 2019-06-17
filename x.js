@@ -299,7 +299,7 @@ function bindCondition(el, binding, $, field) {
         for(let fn of node[_binding_]) unwatch($, fn.field, fn); // 解除在上面 append 过程中对应元素添加的绑定
     },
     fn = function(field, value, origin) {
-        if(!!value === !!origin) return; // 真假未变
+        if(value === origin) return; // 未发生变更
         !!value ? append(field) : remove();
     };
     if(!!getData($.$data, field)) append(field);
